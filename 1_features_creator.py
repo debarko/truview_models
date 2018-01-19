@@ -11,11 +11,16 @@ def extract_features(directory):
     # load the model
     model = VGG16()
     # re-structure the model
+    # notice the transfer learning
     model.layers.pop()
     model = Model(inputs=model.inputs, outputs=model.layers[-1].output)
-    # summarize
+    # summarize the model
     print(model.summary())
     # extract features from each photo
+    # it will store all the features
+    # in this features dict
+    # later this will be save as a
+    # pickle for future use
     features = dict()
     for name in listdir(directory):
         # load an image from file
