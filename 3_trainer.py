@@ -112,12 +112,21 @@ def create_sequences(tokenizer, max_length, descriptions, photos):
 def define_model(vocab_size, max_length):
     # feature extractor model
     inputs1 = Input(shape=(4096,))
+    # why is dropout required
+    # it's to stop overfitting
+    # by adding random values
+    # http://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf
     fe1 = Dropout(0.5)(inputs1)
+    # standard layer with relu
     fe2 = Dense(256, activation='relu')(fe1)
     # sequence model
     inputs2 = Input(shape=(max_length,))
+    # convert input matrix into a
+    # required shape of 34x256
     se1 = Embedding(vocab_size, 256, mask_zero=True)(inputs2)
+    # random layer as above
     se2 = Dropout(0.5)(se1)
+    # keras.layers.LSTM(units, activation='tanh', recurrent_activation='hard_sigmoid', use_bias=True, kernel_initializer='glorot_uniform', recurrent_initializer='orthogonal', bias_initializer='zeros', unit_forget_bias=True, kernel_regularizer=None, recurrent_regularizer=None, bias_regularizer=None, activity_regularizer=None, kernel_constraint=None, recurrent_constraint=None, bias_constraint=None, dropout=0.0, recurrent_dropout=0.0, implementation=1, return_sequences=False, return_state=False, go_backwards=False, stateful=False, unroll=False)
     se3 = LSTM(256)(se2)
     # decoder model
     decoder1 = add([fe2, se3])
